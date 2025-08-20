@@ -10,6 +10,13 @@ namespace UNIB.Unpacker
         private static List<DataFolder> m_FoldersTable = new List<DataFolder>();
         private static List<DataEntry> m_EntryTable = new List<DataEntry>();
 
+        // Helper function to sanitize paths from the archive
+        private static String SanitizePath(String pathFromArchive)
+        {
+            // Replace any Windows backslashes with the current system's directory separator
+            return pathFromArchive.Replace('\\', Path.DirectorySeparatorChar);
+        }
+
         public static void iDoIt(String m_IndexFile, String m_DstFolder)
         {
             using (FileStream TIndexStream = File.OpenRead(m_IndexFile))
@@ -30,6 +37,8 @@ namespace UNIB.Unpacker
                     m_Folder.dwUnknown1 = TIndexStream.ReadInt32();
                     m_Folder.dwUnknown2 = TIndexStream.ReadInt32();
                     m_Folder.m_FolderName = Encoding.ASCII.GetString(TIndexStream.ReadBytes(116)).TrimEnd('\0');
+                    // FIX: Sanitize the folder name read from the archive
+                    m_Folder.m_FolderName = SanitizePath(m_Folder.m_FolderName);
 
                     m_FoldersTable.Add(m_Folder);
                 }
@@ -45,6 +54,8 @@ namespace UNIB.Unpacker
                     m_Entry.dwCompressedSize = TIndexStream.ReadInt32();
                     m_Entry.dwOffset = TIndexStream.ReadUInt32();
                     m_Entry.m_FileName = Encoding.ASCII.GetString(TIndexStream.ReadBytes(64)).TrimEnd('\0');
+                    // FIX: Sanitize the file name read from the archive
+                    m_Entry.m_FileName = SanitizePath(m_Entry.m_FileName);
 
                     m_EntryTable.Add(m_Entry);
 
@@ -56,17 +67,23 @@ namespace UNIB.Unpacker
                     TIndexStream.Seek(4, SeekOrigin.Current);
                 }
 
-                using (FileStream TDataStream = File.OpenRead(Path.GetDirectoryName(m_IndexFile) + @"\" + m_Header.m_ArchiveName))
+                // Use Path.Combine to find the .dat file
+                String m_DataFile = Path.Combine(Path.GetDirectoryName(m_IndexFile), m_Header.m_ArchiveName);
+                using (FileStream TDataStream = File.OpenRead(m_DataFile))
                 {
                     Int32 j = 0;
                     foreach (var m_Folder in m_FoldersTable)
                     {
                         for (Int32 i = 0; i < m_Folder.dwFilesInFolder; i++, j++)
                         {
-                            String m_FullPath = m_DstFolder + m_Folder.m_FolderName + @"\" + m_EntryTable[j].m_FileName;
+                            // Use Path.Combine to create the full output path
+                            String m_FullPath = Path.Combine(m_DstFolder, m_Folder.m_FolderName, m_EntryTable[j].m_FileName);
 
-                            Utils.iSetInfo("[UNPACKING]: " + m_Folder.m_FolderName + @"\" + m_EntryTable[j].m_FileName);
-                            Utils.iCreateDirectory(m_FullPath);
+                            // Also fix the info message to use the correct slash for display
+                            String m_DisplayPath = Path.Combine(m_Folder.m_FolderName, m_EntryTable[j].m_FileName);
+                            Utils.iSetInfo("[UNPACKING]: " + m_DisplayPath);
+
+                            Utils.iCreateDirectory(Path.GetDirectoryName(m_FullPath)); // Ensure the parent directory exists
 
                             TDataStream.Seek(m_EntryTable[j].dwOffset, SeekOrigin.Begin);
 

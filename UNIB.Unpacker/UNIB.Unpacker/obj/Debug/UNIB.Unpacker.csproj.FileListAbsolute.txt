@@ -1,0 +1,7 @@
+/home/ethan/Repos/UNIB.Data.Tool/UNIB.Unpacker/UNIB.Unpacker/bin/Debug/UNIB.Unpacker.exe.config
+/home/ethan/Repos/UNIB.Data.Tool/UNIB.Unpacker/UNIB.Unpacker/bin/Debug/UNIB.Unpacker.exe
+/home/ethan/Repos/UNIB.Data.Tool/UNIB.Unpacker/UNIB.Unpacker/bin/Debug/UNIB.Unpacker.pdb
+/home/ethan/Repos/UNIB.Data.Tool/UNIB.Unpacker/UNIB.Unpacker/obj/Debug/UNIB.Unpacker.csproj.AssemblyReference.cache
+/home/ethan/Repos/UNIB.Data.Tool/UNIB.Unpacker/UNIB.Unpacker/obj/Debug/UNIB.Unpacker.csproj.CoreCompileInputs.cache
+/home/ethan/Repos/UNIB.Data.Tool/UNIB.Unpacker/UNIB.Unpacker/obj/Debug/UNIB.Unpacker.exe
+/home/ethan/Repos/UNIB.Data.Tool/UNIB.Unpacker/UNIB.Unpacker/obj/Debug/UNIB.Unpacker.pdb

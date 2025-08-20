@@ -67,16 +67,19 @@ namespace UNIB.Unpacker
             String m_Output = Utils.iCheckArgumentsPath(args[1]);
 
             foreach (var m_IndexFile in m_IndexFiles)
-            {
-                if (File.Exists(m_Input + m_IndexFile))
-                {
-                    DataUnpack.iDoIt(m_Input + m_IndexFile, m_Output);
-                }
-                else
-                {
-                    Utils.iSetError("[ERROR]: Unable to read index file -> " + m_Input + m_IndexFile);
-                }
-            }
+{
+    // Use Path.Combine to create a correct path for the current OS
+    string fullIndexFilePath = Path.Combine(m_Input, m_IndexFile);
+
+    if (File.Exists(fullIndexFilePath))
+    {
+        DataUnpack.iDoIt(fullIndexFilePath, m_Output);
+    }
+    else
+    {
+        Utils.iSetError("[ERROR]: Unable to read index file -> " + fullIndexFilePath);
+    }
+}
         }
     }
 }
